@@ -9,10 +9,16 @@ import java.util.Arrays;
 /**
  * @author susen
  */
+import java.util.Arrays;
+
+/**
+ * @author susen
+ */
 public class Brute {
     public static void main(String[] args) {
-        StdDraw.setXscale(0.0D, 32768.0D);
-        StdDraw.setYscale(0.0D, 32768.0D);
+        // rescale coordinates and turn on animation mode
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
 
         String filename = args[0];
         In in = new In(filename);
@@ -35,23 +41,23 @@ public class Brute {
                         Point q = points[j];
                         Point r = points[k];
                         Point s = points[l];
-                        if ((p.slopeTo(q) == p.slopeTo(r)) && (p.slopeTo(r) == p.slopeTo(s))) {
-                            Point[] tuple = {p, q, r, s};
+                        if (p.slopeTo(q) == p.slopeTo(r)
+                                && p.slopeTo(r) == p.slopeTo(s)) {
+                            Point[] tuple = new Point[] {p, q, r, s};
                             Arrays.sort(tuple);
                             tuple[0].drawTo(tuple[3]);
-                            StdOut.printf(
-                                    "%s -> %s -> %s -> %s\n",
-                                    new Point[]{tuple[0], tuple[1], tuple[2], tuple[3]});
+                            StdOut.printf("%s -> %s -> %s -> %s\n",
+                                    tuple[0], tuple[1], tuple[2], tuple[3]);
                         }
                     }
                 }
-
             }
-
         }
 
+        // display to screen all at once
         StdDraw.show(0);
 
+        // reset the pen radius
         StdDraw.setPenRadius();
     }
 }

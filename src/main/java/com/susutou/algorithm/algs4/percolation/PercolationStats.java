@@ -9,7 +9,7 @@ public class PercolationStats {
     private double[] experiments;
 
     public PercolationStats(int N, int T) {
-        if ((N < 1) || (T < 1)) {
+        if (N < 1 || T < 1) {
             throw new IllegalArgumentException("N and T must be integers greater than or equal to 1.");
         }
 
@@ -26,7 +26,7 @@ public class PercolationStats {
                     counter += 1L;
                 }
             }
-            this.experiments[numExperiments] = (counter / (N * N));
+            this.experiments[numExperiments] = (double) counter / (N * N);
         }
     }
 

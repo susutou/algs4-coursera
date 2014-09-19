@@ -4,15 +4,16 @@ import edu.princeton.cs.introcs.In;
 import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.introcs.StdOut;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author susen
  */
 public class Fast {
     public static void main(String[] args) {
-        StdDraw.setXscale(0.0D, 32768.0D);
-        StdDraw.setYscale(0.0D, 32768.0D);
+        // rescale coordinates and turn on animation mode
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
 
         String filename = args[0];
         In in = new In(filename);
@@ -36,41 +37,41 @@ public class Fast {
             double slope = origin.slopeTo(points[j]);
             int continuityCounter = 1;
             while (true) {
-                j++;
-                if ((j < n) && (origin.slopeTo(points[j]) == slope)) {
+                while (++j < n && origin.slopeTo(points[j]) == slope) {
                     continuityCounter++;
-                } else {
-                    if (continuityCounter >= 3) {
-                        Point[] segment = new Point[continuityCounter + 1];
-                        segment[0] = origin;
-                        System.arraycopy(
-                                points, j - continuityCounter,
-                                segment, j - continuityCounter - (j - continuityCounter) + 1,
-                                j - (j - continuityCounter));
+                }
+                if (continuityCounter >= 3) {
+                    Point[] segment = new Point[continuityCounter + 1];
+                    segment[0] = origin;
+                    System.arraycopy(
+                            points, j - continuityCounter,
+                            segment, j - continuityCounter - (j - continuityCounter) + 1,
+                            j - (j - continuityCounter));
+                    Arrays.sort(segment);
 
-                        Arrays.sort(segment);
-
-                        segment[0].drawTo(segment[(segment.length - 1)]);
-                        for (int k = 0; k < segment.length; k++) {
-                            if (k == 0)
-                                StdOut.print(segment[k]);
-                            else {
-                                StdOut.print(" -> " + segment[k]);
-                            }
+                    segment[0].drawTo(segment[segment.length - 1]);
+                    for (int k = 0; k < segment.length; k++) {
+                        if (k == 0) {
+                            StdOut.print(segment[k]);
+                        } else {
+                            StdOut.print(" -> " + segment[k]);
                         }
-                        StdOut.println();
                     }
-                    if (j + 1 >= n) break;
+                    StdOut.println();
+                }
+                if (j + 1 < n) {
                     slope = origin.slopeTo(points[j]);
                     continuityCounter = 1;
+                } else {
+                    break;
                 }
-
             }
-
         }
 
+        // display to screen all at once
         StdDraw.show(0);
 
+        // reset the pen radius
         StdDraw.setPenRadius();
     }
 }
