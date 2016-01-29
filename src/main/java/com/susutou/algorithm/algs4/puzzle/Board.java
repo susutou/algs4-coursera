@@ -1,9 +1,6 @@
 package com.susutou.algorithm.algs4.puzzle;
 
-import edu.princeton.cs.introcs.StdOut;
-
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * @author susen
@@ -70,7 +67,14 @@ public class Board {
         return hamming() == 0;
     }
 
+    // don't really understand the requirement...
+    // will return the first possible twin based on my understanding
     public Board twin() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+//                if ()
+            }
+        }
         return null;
     }
 
@@ -143,27 +147,5 @@ public class Board {
             builder.append('\n');
         }
         return builder.toString();
-    }
-
-    public static void main(String[] args) {
-        int[][] blocks = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
-        Board b = new Board(blocks);
-        Board bClone = new Board(blocks);
-
-        StdOut.println(b);
-        StdOut.println(b.dimension());
-        StdOut.println(b.hamming());
-        StdOut.println(b.manhattan());
-        StdOut.println(b.equals(new Object()));
-        StdOut.println(b.equals(b));
-        StdOut.println(b.equals(bClone));
-        StdOut.println(b.equals(bClone) == bClone.equals(b));
-
-        StdOut.println("Neighbors - ");
-        for (Board neighbor : b.neighbors()) {
-            StdOut.println(neighbor);
-        }
-        StdOut.println("Original Board - ");
-        StdOut.println(b);
     }
 }

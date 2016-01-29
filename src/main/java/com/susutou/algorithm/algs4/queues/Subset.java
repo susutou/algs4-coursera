@@ -1,6 +1,6 @@
 package com.susutou.algorithm.algs4.queues;
 
-import edu.princeton.cs.introcs.StdIn;
+import edu.princeton.cs.algs4.StdIn;
 
 /**
  * @author susen

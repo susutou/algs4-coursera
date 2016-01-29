@@ -1,6 +1,6 @@
 package com.susutou.algorithm.algs4.percolation;
 
-import edu.princeton.cs.algorithms.WeightedQuickUnionUF;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
  * @author susen

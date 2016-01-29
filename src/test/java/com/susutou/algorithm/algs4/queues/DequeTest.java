@@ -1,7 +1,7 @@
 package com.susutou.algorithm.algs4.queues;
 
 import com.google.common.collect.Iterables;
-import edu.princeton.cs.introcs.StdRandom;
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
