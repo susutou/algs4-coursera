@@ -14,3 +14,7 @@
 # Maven
 log/
 target/
+
+# submission files
+__submission__/
+*.zip

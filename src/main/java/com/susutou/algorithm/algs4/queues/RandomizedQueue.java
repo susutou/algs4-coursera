@@ -18,10 +18,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         size = 0;
     }
 
-    public static void main(String[] args) {
-
-    }
-
     public boolean isEmpty() {
         return size == 0;
     }
@@ -44,12 +40,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
         int randomIndex = StdRandom.uniform(size);
-        @SuppressWarnings("unchecked") Item item = (Item) queue[randomIndex];
-        queue[randomIndex] = queue[(size - 1)];
-        queue[(size - 1)] = null;
+        Item item = (Item) queue[randomIndex];
+        queue[randomIndex] = queue[size - 1];
+        queue[size - 1] = null;
         size -= 1;
 
-        if ((size > 0) && (size == queue.length / 4)) {
+        if (size > 0 && size == queue.length / 4) {
             resize(queue.length / 2);
         }
         return item;
@@ -60,7 +56,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
         int randomIndex = StdRandom.uniform(size);
-        @SuppressWarnings("unchecked") Item item = (Item) queue[randomIndex];
+        Item item = (Item) queue[randomIndex];
         return item;
     }
 
@@ -78,8 +74,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void assertNotNull(Item item) {
-        if (item == null)
+        if (item == null) {
             throw new NullPointerException();
+        }
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
@@ -102,7 +99,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new NoSuchElementException();
             }
             i -= 1;
-            @SuppressWarnings("unchecked") Item item = (Item) randomQueue[i];
+            Item item = (Item) randomQueue[i];
             randomQueue[i] = null;
             return item;
         }
