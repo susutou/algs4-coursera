@@ -10,13 +10,19 @@ import java.util.Arrays;
  * @author susen
  */
 public class BruteCollinearPoints {
+    private Object[] segmentObjects;
     private LineSegment[] segments;
+    private int segmentId;
 
-    // finds all line segments containing 4 points
+    // finds all line segmentObjects containing 4 points
     public BruteCollinearPoints(Point[] points) {
+        if (checkDuplicatePoints(points)) {
+            throw new IllegalArgumentException("Cannot have duplicate points.");
+        }
+
         int n = points.length;
-        int segmentId = 0;
-        LineSegment[] allSegments = new LineSegment[n];
+        segmentId = 0;
+        segmentObjects = new LineSegment[n];
 
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
@@ -29,8 +35,11 @@ public class BruteCollinearPoints {
                         if (p.slopeTo(q) == p.slopeTo(r) && p.slopeTo(r) == p.slopeTo(s)) {
                             Point[] tuple = new Point[] {p, q, r, s};
                             Arrays.sort(tuple);
-                            allSegments[segmentId] = new LineSegment(tuple[0], tuple[3]);
+                            segmentObjects[segmentId] = new LineSegment(tuple[0], tuple[3]);
                             segmentId++;
+                            if (segmentId == segmentObjects.length) {
+                                resize(segmentId * 2);
+                            }
                         }
                     }
                 }
@@ -38,20 +47,49 @@ public class BruteCollinearPoints {
         }
 
         segments = new LineSegment[segmentId];
-        System.arraycopy(allSegments, 0, segments, 0, segmentId);
+        for (int i = 0; i < segmentId; i++) {
+            segments[i] = (LineSegment) segmentObjects[i];
+        }
     }
 
-    private void verifyPoints(Point[] points) {
-
-    }
-
-    // the number of line segments
+    // the number of line segmentObjects
     public int numberOfSegments() {
         return segments.length;
     }
 
-    // the line segments
+    // the line segmentObjects
     public LineSegment[] segments() {
-        return segments;
+        LineSegment[] ret = new LineSegment[numberOfSegments()];
+        System.arraycopy(segments, 0, ret, 0, numberOfSegments());
+
+        return ret;
+    }
+
+    private boolean checkDuplicatePoints(Point[] points) {
+        if (points.length > 0) {
+            Point[] pointsCopy = new Point[points.length];
+            System.arraycopy(points, 0, pointsCopy, 0, points.length);
+            Arrays.sort(pointsCopy);
+            Point currentPoint = pointsCopy[0];
+            for (int i = 1; i < pointsCopy.length; i++) {
+                if (pointsCopy[i].compareTo(currentPoint) == 0) {
+                    return true;
+                } else {
+                    currentPoint = pointsCopy[i];
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    private void resize(int capacity) {
+        assert capacity >= segmentId;
+        if (capacity > segmentId) {
+            Object[] temp = new Object[capacity];
+            System.arraycopy(segmentObjects, 0, temp, 0, segmentId);
+            segmentObjects = temp;
+        }
     }
 }

@@ -18,15 +18,6 @@ public class Point implements Comparable<Point> {
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
 
-    private final Comparator<Point> SLOPE_ORDER = new Comparator<Point>() {
-        @Override
-        public int compare(Point o1, Point o2) {
-            double s1 = slopeTo(o1);
-            double s2 = slopeTo(o2);
-            return s1 < s2 ? -1 : (s1 > s2 ? 1 : 0);
-        }
-    };
-
     /**
      * Initializes a new point.
      *
@@ -99,7 +90,13 @@ public class Point implements Comparable<Point> {
         } else if (this.y < that.y) {
             return -1;
         } else {
-            return this.x > that.x ? 1 : (this.x == that.x ? 0 : -1);
+            if (this.x > that.x) {
+                return 1;
+            } else if (this.x < that.x) {
+                return -1;
+            } else {
+                return 0;
+            }
         }
     }
 
@@ -110,7 +107,20 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        return SLOPE_ORDER;
+        return new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+                double s1 = slopeTo(o1);
+                double s2 = slopeTo(o2);
+                if (s1 < s2) {
+                    return -1;
+                } else if (s1 > s2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        };
     }
 
 
