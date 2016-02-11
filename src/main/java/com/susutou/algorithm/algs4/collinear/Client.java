@@ -4,11 +4,13 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author susen
  */
 public class Client {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         // read the N points from a file
         In in = new In(args[0]);
@@ -30,10 +32,12 @@ public class Client {
         StdDraw.show();
 
         // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             segment.draw();
         }
+
+        TimeUnit.SECONDS.sleep(60);
     }
 }

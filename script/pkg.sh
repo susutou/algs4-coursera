@@ -17,3 +17,10 @@ cd __submission__
 zip queues.zip *.java
 rm -rf *.java
 
+cd ..
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/collinear/Point.java" > __submission__/Point.java
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/collinear/BruteCollinearPoints.java" > __submission__/BruteCollinearPoints.java
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/collinear/FastCollinearPoints.java" > __submission__/FastCollinearPoints.java
+cd __submission__
+zip collinear.zip *.java
+rm -rf *.java
