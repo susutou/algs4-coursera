@@ -10,12 +10,6 @@ public class FastCollinearPoints {
     private LineSegment[] segments;
     private int segmentId;
 
-    private class Pair {
-        public Pair(int x, int y, double slope) {
-
-        }
-    }
-
     // finds all line segments containing 4 points
     public FastCollinearPoints(Point[] points) {
         checkNull(points);
@@ -36,30 +30,23 @@ public class FastCollinearPoints {
             System.arraycopy(pointsCopy, i + 1, sortedPoints, i, n - i - 1);
             Arrays.sort(sortedPoints, 0, n - 1, p.slopeOrder());
 
-            int currentStartIndex = -1;
-            int j = 0;
-
-            while (j < n) {
-                if (currentStartIndex == -1) {
-                    currentStartIndex = j;
-                } else {
-                    Point currentStartPoint = sortedPoints[currentStartIndex];
-                    Point currentPoint = sortedPoints[j];
-                    if (currentPoint == null || currentPoint.slopeTo(p) != currentStartPoint.slopeTo(p)) {
-                        int len = j - currentStartIndex;
-                        /* critical - if current starting point of this segment is smaller than p,
-                           then this line segment is already in the collection */
-                        if (len >= 3 && currentStartPoint.compareTo(p) > 0) {
-                            segmentObjects[segmentId] = new LineSegment(p, sortedPoints[j - 1]);
-                            segmentId++;
-                            if (segmentId == segmentObjects.length) {
-                                resize(segmentId * 2);
-                            }
+            int currentStartIndex = 0;
+            for (int j = 1; j < n; j++) {
+                Point currentStartPoint = sortedPoints[currentStartIndex];
+                Point currentPoint = sortedPoints[j];
+                if (currentPoint == null || currentPoint.slopeTo(p) != currentStartPoint.slopeTo(p)) {
+                    int len = j - currentStartIndex;
+                    /* critical - if current starting point of this segment is smaller than p,
+                       then this line segment is already in the collection */
+                    if (len >= 3 && currentStartPoint.compareTo(p) > 0) {
+                        segmentObjects[segmentId] = new LineSegment(p, sortedPoints[j - 1]);
+                        segmentId++;
+                        if (segmentId == segmentObjects.length) {
+                            resize(segmentId * 2);
                         }
-                        currentStartIndex = j;
                     }
+                    currentStartIndex = j;
                 }
-                j++;
             }
         }
 
