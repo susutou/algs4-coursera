@@ -1,5 +1,7 @@
 package com.susutou.algorithm.algs4.puzzle;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.LinkedList;
 
 /**
@@ -10,14 +12,22 @@ public class Board {
     private int n;  // dimension
     private int emptyRow;
     private int emptyCol;  // position of empty spot on board
+    private int hammingDistance = -1;
+    private int manhattanDistance = -1;
 
+    /**
+     * construct a board from an N-by-N array of blocks (where blocks[i][j] = block in row i, column j)
+     *
+     * @param blocks N-by-N array of blocks
+     */
     public Board(int[][] blocks) {
         assert blocks.length > 0 && blocks.length == blocks[0].length;    /* mark */
         this.n = blocks.length;
         this.blocks = new int[n][n];
         for (int i = 0; i < n; i++) {
-            System.arraycopy(blocks[i], 0, this.blocks[i], 0, n);
+            // System.arraycopy(blocks[i], 0, this.blocks[i], 0, n);
             for (int j = 0; j < n; j++) {
+                this.blocks[i][j] = blocks[i][j];
                 if (blocks[i][j] == 0) {
                     this.emptyRow = i;
                     this.emptyCol = j;
@@ -26,58 +36,121 @@ public class Board {
         }
     }
 
+    /**
+     * construct a board from an N-by-N array of blocks plus swapping (rowA, colA) <-> (rowB, colB)
+     */
+    private Board(int[][] blocks, int rowA, int colA, int rowB, int colB) {
+        assert blocks.length > 0 && blocks.length == blocks[0].length;
+        this.n = blocks.length;
+        this.blocks = new int[n][n];
+        validateCoordinates(n, rowA, colA, rowB, colB);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                this.blocks[i][j] = blocks[i][j];
+                if (blocks[i][j] == 0) {
+                    this.emptyRow = i;
+                    this.emptyCol = j;
+                }
+            }
+        }
+
+        int temp = this.blocks[rowA][colA];
+        this.blocks[rowA][colA] = this.blocks[rowB][colB];
+        this.blocks[rowB][colB] = temp;
+
+        if (this.blocks[rowA][colA] == 0) {
+            emptyRow = rowA;
+            emptyCol = colA;
+        } else if (this.blocks[rowB][colB] == 0) {
+            emptyRow = rowB;
+            emptyCol = colB;
+        }
+    }
+
+    /**
+     * @return board dimension N
+     */
     public int dimension() {
         return n;
     }
 
+    /**
+     * @return number of blocks out of place
+     */
     public int hamming() {
-        int distance = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int block = blocks[i][j];
-                if (block != 0) {
-                    // convert row and col to block number in goal
-                    int goalBlock = i * n + j + 1;
-                    if (block != goalBlock) {
-                        distance++;
+        if (hammingDistance == -1) {
+            int distance = 0;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int block = blocks[i][j];
+                    if (block != 0) {
+                        // convert row and col to block number in goal
+                        int goalBlock = i * n + j + 1;
+                        if (block != goalBlock) {
+                            distance++;
+                        }
                     }
                 }
             }
+            hammingDistance = distance;
         }
-        return distance;
+
+        return hammingDistance;
     }
 
+    /**
+     * @return sum of Manhattan distances between blocks and goal
+     */
     public int manhattan() {
-        int distance = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int block = blocks[i][j];
-                // convert block number to row and col in goal
-                if (block != 0) {
-                    int col = (block - 1) % n;
-                    int row = (block - 1) / n;
-                    distance += Math.abs(i - row) + Math.abs(j - col);
+        if (manhattanDistance == -1) {
+            int distance = 0;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int block = blocks[i][j];
+                    // convert block number to row and col in goal
+                    if (block != 0) {
+                        int col = (block - 1) % n;
+                        int row = (block - 1) / n;
+                        distance += Math.abs(i - row) + Math.abs(j - col);
+                    }
                 }
             }
+            manhattanDistance = distance;
         }
-        return distance;
+
+        return manhattanDistance;
     }
 
+    /**
+     * @return is this board the goal board?
+     */
     public boolean isGoal() {
         return hamming() == 0;
     }
 
-    // don't really understand the requirement...
-    // will return the first possible twin based on my understanding
+    /**
+     * @return a board that is obtained by exchanging any pair of blocks
+     */
     public Board twin() {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-//                if ()
-            }
+        int rowA = 0;
+        int colA = 0;
+        int rowB = 0;
+        int colB = 0;
+
+        while ((rowA == rowB && colA == colB) || blocks[rowA][colA] == 0 || blocks[rowB][colB] == 0) {
+            rowA = StdRandom.uniform(n);
+            colA = StdRandom.uniform(n);
+            rowB = StdRandom.uniform(n);
+            colB = StdRandom.uniform(n);
         }
-        return null;
+
+        return new Board(blocks, rowA, colA, rowB, colB);
     }
 
+    /**
+     * @param y another Board y
+     * @return does this board equal y?
+     */
     @Override
     public boolean equals(Object y) {
         if (y == null) {
@@ -99,6 +172,9 @@ public class Board {
         return false;
     }
 
+    /**
+     * @return all neighboring boards
+     */
     public Iterable<Board> neighbors() {
         LinkedList<Board> boards = new LinkedList<Board>();
         // move from up
@@ -120,22 +196,9 @@ public class Board {
         return boards;
     }
 
-    // swap block[row, col] with empty block and return the new Board
-    private Board swap(int row, int col) {
-        // ensure that all swaps are legal
-        assert row < n && col < n && Math.abs(row - emptyRow) == 1 || Math.abs(col - emptyCol) == 1;
-        // swap
-        blocks[emptyRow][emptyCol] = blocks[row][col];
-        blocks[row][col] = 0;
-        // generate neighbor
-        Board neighbor = new Board(blocks);
-        // swap back
-        blocks[row][col] = blocks[emptyRow][emptyCol];
-        blocks[emptyRow][emptyCol] = 0;
-
-        return neighbor;
-    }
-
+    /**
+     * @return string representation of this board (in the output format specified below)
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -147,5 +210,16 @@ public class Board {
             builder.append('\n');
         }
         return builder.toString();
+    }
+
+    // swap block[row, col] with empty block and return the new Board
+    private Board swap(int row, int col) {
+        return new Board(blocks, emptyRow, emptyCol, row, col);
+    }
+
+    private void validateCoordinates(int n, int ...coordinates) {
+        for (int c : coordinates) {
+            assert c >= 0 && c < n;
+        }
     }
 }

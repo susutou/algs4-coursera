@@ -30,7 +30,11 @@ public class BoardTest {
         for (Board neighbor : b.neighbors()) {
             StdOut.println(neighbor);
         }
+
         StdOut.println("Original Board - ");
         StdOut.println(b);
+
+        StdOut.println("Twin Board - ");
+        StdOut.println(b.twin());
     }
 }
