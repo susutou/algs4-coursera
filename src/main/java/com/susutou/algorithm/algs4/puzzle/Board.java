@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * @author susen
  */
 public class Board {
-    private int[][] blocks;  // blocks
+    private short[][] blocks;  // blocks
     private int n;  // dimension
     private int emptyRow;
     private int emptyCol;  // position of empty spot on board
@@ -23,11 +23,10 @@ public class Board {
     public Board(int[][] blocks) {
         assert blocks.length > 0 && blocks.length == blocks[0].length;    /* mark */
         this.n = blocks.length;
-        this.blocks = new int[n][n];
+        this.blocks = new short[n][n];
         for (int i = 0; i < n; i++) {
-            // System.arraycopy(blocks[i], 0, this.blocks[i], 0, n);
             for (int j = 0; j < n; j++) {
-                this.blocks[i][j] = blocks[i][j];
+                this.blocks[i][j] = (short) blocks[i][j];
                 if (blocks[i][j] == 0) {
                     this.emptyRow = i;
                     this.emptyCol = j;
@@ -39,14 +38,14 @@ public class Board {
     /**
      * construct a board from an N-by-N array of blocks plus swapping (rowA, colA) <-> (rowB, colB)
      */
-    private Board(int[][] blocks, int rowA, int colA, int rowB, int colB) {
+    private Board(short[][] blocks, int rowA, int colA, int rowB, int colB, int initialManhattanDistance) {
         assert blocks.length > 0 && blocks.length == blocks[0].length;
         this.n = blocks.length;
-        this.blocks = new int[n][n];
+        this.blocks = new short[n][n];
         validateCoordinates(n, rowA, colA, rowB, colB);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                this.blocks[i][j] = blocks[i][j];
+                this.blocks[i][j] = (short) blocks[i][j];
                 if (blocks[i][j] == 0) {
                     this.emptyRow = i;
                     this.emptyCol = j;
@@ -54,7 +53,7 @@ public class Board {
             }
         }
 
-        int temp = this.blocks[rowA][colA];
+        short temp = this.blocks[rowA][colA];
         this.blocks[rowA][colA] = this.blocks[rowB][colB];
         this.blocks[rowB][colB] = temp;
 
@@ -65,6 +64,9 @@ public class Board {
             emptyRow = rowB;
             emptyCol = colB;
         }
+
+
+        this.manhattanDistance = initialManhattanDistance;
     }
 
     /**
@@ -108,17 +110,23 @@ public class Board {
                 for (int j = 0; j < n; j++) {
                     int block = blocks[i][j];
                     // convert block number to row and col in goal
-                    if (block != 0) {
-                        int col = (block - 1) % n;
-                        int row = (block - 1) / n;
-                        distance += Math.abs(i - row) + Math.abs(j - col);
-                    }
+                    distance += singleManhattan(block, i, j);
                 }
             }
             manhattanDistance = distance;
         }
 
         return manhattanDistance;
+    }
+
+    private int singleManhattan(int block, int i, int j) {
+        if (block != 0) {
+            int col = (block - 1) % n;
+            int row = (block - 1) / n;
+            return Math.abs(i - row) + Math.abs(j - col);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -144,24 +152,29 @@ public class Board {
             colB = StdRandom.uniform(n);
         }
 
-        return new Board(blocks, rowA, colA, rowB, colB);
+        return new Board(blocks, rowA, colA, rowB, colB, -1);
     }
 
     /**
-     * @param y another Board y
-     * @return does this board equal y?
+     * @param other another Board other
+     * @return does this board equal other?
      */
     @Override
-    public boolean equals(Object y) {
-        if (y == null) {
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        } else if (other == null) {
             return false;
-        } else if (y instanceof Board) {
-            if (y == this) {
-                return true;
-            } else if (((Board) y).dimension() == n) {
+        } else if (other.getClass() != this.getClass()) {
+            return false;
+        } else {
+            Board ob = (Board) other;
+            if (ob.dimension() != n) {
+                return false;
+            } else {
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
-                        if (((Board) y).blocks[i][j] != blocks[i][j]) {
+                        if (ob.blocks[i][j] != blocks[i][j]) {
                             return false;
                         }
                     }
@@ -169,7 +182,6 @@ public class Board {
                 return true;
             }
         }
-        return false;
     }
 
     /**
@@ -214,12 +226,15 @@ public class Board {
 
     // swap block[row, col] with empty block and return the new Board
     private Board swap(int row, int col) {
-        return new Board(blocks, emptyRow, emptyCol, row, col);
+        int singleManhattanAfterSwap = singleManhattan(blocks[row][col], emptyRow, emptyCol);
+        int singleManhattanBeforeSwap = singleManhattan(blocks[row][col], row, col);
+        int diff = singleManhattanAfterSwap - singleManhattanBeforeSwap;
+        return new Board(blocks, emptyRow, emptyCol, row, col, manhattan() + diff);
     }
 
-    private void validateCoordinates(int n, int ...coordinates) {
+    private void validateCoordinates(int upperBound, int ...coordinates) {
         for (int c : coordinates) {
-            assert c >= 0 && c < n;
+            assert c >= 0 && c < upperBound;
         }
     }
 }

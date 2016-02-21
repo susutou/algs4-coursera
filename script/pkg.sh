@@ -24,3 +24,10 @@ tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/collinear/FastCollinear
 cd __submission__
 zip collinear.zip *.java
 rm -rf *.java
+
+cd ..
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/puzzle/Board.java" > __submission__/Board.java
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/puzzle/Solver.java" > __submission__/Solver.java
+cd __submission__
+zip 8puzzle.zip *.java
+rm -rf *.java
