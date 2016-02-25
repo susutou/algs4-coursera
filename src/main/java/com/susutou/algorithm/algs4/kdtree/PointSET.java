@@ -39,6 +39,7 @@ public class PointSET {
      * add the point to the set (if it is not already in the set)
      */
     public void insert(Point2D p) {
+        checkNull(p, "Parameter p cannot be null.");
         set.add(p);
     }
 
@@ -46,6 +47,7 @@ public class PointSET {
      * @return does the set contain point p?
      */
     public boolean contains(Point2D p) {
+        checkNull(p, "Parameter p cannot be null.");
         return set.contains(p);
     }
 
@@ -62,15 +64,18 @@ public class PointSET {
      * @return all points that are inside the rectangle
      */
     public Iterable<Point2D> range(RectHV rect) {
+        checkNull(rect, "Parameter rect cannot be null.");
         return set.stream()
-                .filter(p -> p.x() > rect.xmin() && p.x() < rect.xmax() && p.y() > rect.ymin() && p.y() < rect.ymax())
-                .collect(Collectors.toSet());
+                .filter(p -> p.x() >= rect.xmin() && p.x() <= rect.xmax() && p.y() >= rect.ymin() && p.y() <= rect.ymax())
+                .collect(Collectors.toList());
     }
 
     /**
      * @return a nearest neighbor in the set to point p; null if the set is empty
      */
     public Point2D nearest(Point2D p) {
+        checkNull(p, "Parameter p cannot be null.");
+
         Optional<Point2D> nearestPoint = set.stream().min((p1, p2) -> {
             double diff = p.distanceSquaredTo(p1) - p.distanceSquaredTo(p2);
             if (diff > 0) {
@@ -86,6 +91,12 @@ public class PointSET {
             return nearestPoint.get();
         } else {
             return null;
+        }
+    }
+
+    private void checkNull(Object o, String msg) {
+        if (o == null) {
+            throw new NullPointerException(msg);
         }
     }
 

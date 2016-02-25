@@ -31,3 +31,10 @@ tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/puzzle/Solver.java" > _
 cd __submission__
 zip 8puzzle.zip *.java
 rm -rf *.java
+
+cd ..
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/kdtree/PointSET.java" > __submission__/PointSET.java
+tail -n +2 "../src/main/java/com/susutou/algorithm/algs4/kdtree/KdTree.java" > __submission__/KdTree.java
+cd __submission__
+zip kdtree.zip *.java
+rm -rf *.java
